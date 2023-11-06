@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   TextField,
   Button,
@@ -16,15 +16,46 @@ import SeiLogo from "../../assets/images/sei_logo.png";
 import Image from "../../assets/images/dost-bg.jpg";
 import Registration from "./Registration";
 import { handleLoginSubmit } from "./LoginHandlers";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [openModal, setOpenModal] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const navigate = useNavigate();
 
   const initialLoginForm = {
     email: "",
     password: "",
+    rememberMe: rememberMe,
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const roleResponse = axios.get(
+        "http://localhost:3001/api/user-role/role",
+        {
+          headers: {
+            Authorization: `Bearer ${roleResponse.data.token}`,
+          },
+        }
+      );
+      const userRole = roleResponse.data.role;
+
+      localStorage.setItem("userRole", userRole);
+
+      if (userRole === "Admin") {
+        navigate("/admin");
+      } else if (userRole === "Moderator") {
+        navigate("/moderator");
+      } else if (userRole === "User") {
+        navigate("/user");
+      } else {
+        navigate("/");
+      }
+    }
+  }, [navigate]);
 
   const [loginState, setLoginState] = useState(initialLoginForm);
   const [errors, setErrors] = useState({});
@@ -48,9 +79,40 @@ const Login = () => {
     setOpenModal(false);
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    handleLoginClick();
+    try {
+      const response = await axios.post(
+        "http://localhost:3001/api/auth/login",
+        loginState
+      );
+
+      if (response.data.token) {
+        const roleResponse = await axios.get(
+          "http://localhost:3001/api/user-role/role",
+          {
+            headers: {
+              Authorization: `Bearer ${response.data.token}`,
+            },
+          }
+        );
+
+        const role = roleResponse.data.role;
+
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("role", role);
+
+        if (role === "Admin") {
+          navigate("/admin");
+        } else if (role === "Moderator") {
+          navigate("/moderator");
+        } else if (role === "User") {
+          navigate("/user");
+        }
+      }
+    } catch (error) {
+      console.error("Login failed: ", error);
+    }
   };
 
   const handleLoginClick = () => {

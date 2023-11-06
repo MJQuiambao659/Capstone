@@ -9,7 +9,7 @@ const registerForm = require("../middlewares/registerForm");
 router.post("/register", registerForm, async (req, res) => {
   try {
     const { firstName, lastName, email, password, program, school, course } =
-    req.body;
+      req.body;
 
     const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
 

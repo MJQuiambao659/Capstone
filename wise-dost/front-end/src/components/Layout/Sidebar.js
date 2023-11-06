@@ -1,24 +1,19 @@
 import React, { useState } from "react";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import PeopleIcon from "@mui/icons-material/People";
-import Collapse from "@mui/material/Collapse";
-import { Typography } from "@mui/material";
-import PersonIcon from "@mui/icons-material/Person"; // Add Person icon
-import GradeIcon from "@mui/icons-material/Grade"; // Add Grade icon
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import DashboardList from "./SidebarList/DashboardList";
+import AnalyticsList from "./SidebarList/AnalyticsList";
+import EducationList from "./SidebarList/EducationList";
+import ScholarsList from "./SidebarList/ScholarsList";
+import AnnouncementList from "./SidebarList/AnnouncementsList"
 
 const SideBar = ({ onItemClick, isSidebarOpen, toggleSidebar }) => {
   const [open, setOpen] = useState(true);
   const [scholarsOpen, setScholarsOpen] = useState(false);
+  const [educationOpen, setEducationOpen] = useState(false);
   const isSmallScreen = useMediaQuery("(max-width:600px)");
 
   const handleDrawerOpen = () => {
@@ -28,15 +23,27 @@ const SideBar = ({ onItemClick, isSidebarOpen, toggleSidebar }) => {
   const handleDrawerClose = () => {
     setOpen(false);
     setScholarsOpen(false);
+    setEducationOpen(false);
   };
 
   const handleScholarsToggle = () => {
+    if (educationOpen) {
+      setEducationOpen(false);
+    }
     setScholarsOpen(!scholarsOpen);
+  };
+
+  const handleEducationToggle = () => {
+    if (scholarsOpen) {
+      setScholarsOpen(false);
+    }
+    setEducationOpen(!educationOpen);
   };
 
   return (
     <>
       {isSmallScreen ? (
+        /*This is for the Phone Version in sidebar */
         <Drawer
           variant="temporary"
           anchor="top"
@@ -73,149 +80,15 @@ const SideBar = ({ onItemClick, isSidebarOpen, toggleSidebar }) => {
           >
             <MenuIcon />
           </IconButton>
-          <List sx={{ height: "100%", width: "100%" }}>
-            <ListItem
-              button
-              onClick={() => onItemClick("dashboard")}
-              // Define the route path
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                borderBottom: "1px solid #9E9E9E",
-              }}
-            >
-              <ListItemIcon
-                sx={{
-                  height: "100%",
-                  marginLeft: open ? -1 : 4,
-                  [`& .MuiDrawer-paper`]: { marginLeft: open ? -1 : 4 },
-                  color: "#E0E0E0",
-                }}
-              >
-                <DashboardIcon />
-              </ListItemIcon>
-              {open && (
-                <ListItemText
-                  primary="Dashboard"
-                  sx={{
-                    color: "#E0E0E0",
-                    marginLeft: -2,
-                    [`& .MuiDrawer-paper`]: { marginLeft: -2 },
-                  }}
-                />
-              )}
-            </ListItem>
-            <ListItem
-              button
-              onClick={handleScholarsToggle}
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                borderBottom: scholarsOpen ? "none" : "1px solid #9E9E9E",
-              }}
-            >
-              <ListItemIcon
-                sx={{
-                  height: "100%",
-                  marginLeft: open ? -1 : 4,
-                  [`& .MuiDrawer-paper`]: { marginLeft: open ? -1 : 4 },
-                  color: "#E0E0E0",
-                }}
-              >
-                <PeopleIcon />
-              </ListItemIcon>
-              {open && (
-                <ListItemText
-                  primary="Scholars"
-                  sx={{
-                    color: "#E0E0E0",
-                    marginLeft: -2,
-                    [`& .MuiDrawer-paper`]: { marginLeft: -2 },
-                  }}
-                />
-              )}
-              {open ? (
-                scholarsOpen ? (
-                  <ExpandLessIcon sx={{ color: "#E0E0E0" }} />
-                ) : (
-                  <ExpandMoreIcon sx={{ color: "#E0E0E0" }} />
-                )
-              ) : null}
-            </ListItem>
-            <Collapse in={scholarsOpen}>
-              <ListItem
-                button
-                onClick={() => onItemClick("grades")}
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  paddingLeft: 4,
-                  color: "#E0E0E0",
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    color: "#E0E0E0",
-                    marginLeft: -6,
-                    [`& .MuiDrawer-paper`]: { marginLeft: -6 },
-                  }}
-                >
-                  <GradeIcon />
-                </ListItemIcon>
-                {open && (
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontSize: "0.8rem",
-                      marginLeft: -2,
-                      [`& .MuiDrawer-paper`]: { marginLeft: -2 },
-                    }}
-                  >
-                    Grades
-                  </Typography>
-                )}
-              </ListItem>
-              <ListItem
-                button
-                onClick={() => onItemClick("users")}
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  paddingLeft: 4,
-                  borderBottom: "1px solid #9E9E9E",
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    color: "#E0E0E0",
-                    marginLeft: -7,
-                    [`& .MuiDrawer-paper`]: { marginLeft: -7 },
-                  }}
-                >
-                  <PersonIcon />
-                </ListItemIcon>
-                {open && (
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontSize: "0.8rem",
-                      color: "#E0E0E0",
-                      marginLeft: -2,
-                      [`& .MuiDrawer-paper`]: { marginLeft: -2 },
-                    }}
-                  >
-                    Users
-                  </Typography>
-                )}
-              </ListItem>
-            </Collapse>
+          <List sx={{ height: "100%" }}>
+            <DashboardList open={open} onItemClick={onItemClick} />
+            <AnalyticsList open={open} onItemClick={onItemClick} />
+            <ScholarsList open={open} onItemClick={onItemClick} />
+            <EducationList open={open} onItemClick={onItemClick} />
           </List>
         </Drawer>
       ) : (
+        /*This is for the Desktop Version in sidebar */
         <Drawer
           variant="permanent"
           sx={{
@@ -225,7 +98,7 @@ const SideBar = ({ onItemClick, isSidebarOpen, toggleSidebar }) => {
               width: open ? 200 : 50,
               boxSizing: "border-box",
               overflowX: "hidden",
-              backgroundColor: "#616161",
+              backgroundColor: "#333333",
             },
             transition: "width 0.3s",
             display: "flex",
@@ -252,145 +125,21 @@ const SideBar = ({ onItemClick, isSidebarOpen, toggleSidebar }) => {
             <MenuIcon />
           </IconButton>
           <List sx={{ height: "100%" }}>
-            <ListItem
-              button
-              onClick={() => onItemClick("dashboard")}
-              // Define the route path
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                borderBottom: "1px solid #9E9E9E",
-              }}
-            >
-              <ListItemIcon
-                sx={{
-                  height: "100%",
-                  marginLeft: open ? -1 : 4,
-                  [`& .MuiDrawer-paper`]: { marginLeft: open ? -1 : 4 },
-                  color: "#E0E0E0",
-                }}
-              >
-                <DashboardIcon />
-              </ListItemIcon>
-              {open && (
-                <ListItemText
-                  primary="Dashboard"
-                  sx={{
-                    color: "#E0E0E0",
-                    marginLeft: -2,
-                    [`& .MuiDrawer-paper`]: { marginLeft: -2 },
-                  }}
-                />
-              )}
-            </ListItem>
-            <ListItem
-              button
-              onClick={handleScholarsToggle}
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                borderBottom: scholarsOpen ? "none" : "1px solid #9E9E9E",
-              }}
-            >
-              <ListItemIcon
-                sx={{
-                  height: "100%",
-                  marginLeft: open ? -1 : 4,
-                  [`& .MuiDrawer-paper`]: { marginLeft: open ? -1 : 4 },
-                  color: "#E0E0E0",
-                }}
-              >
-                <PeopleIcon />
-              </ListItemIcon>
-              {open && (
-                <ListItemText
-                  primary="Scholars"
-                  sx={{
-                    color: "#E0E0E0",
-                    marginLeft: -2,
-                    [`& .MuiDrawer-paper`]: { marginLeft: -2 },
-                  }}
-                />
-              )}
-              {open ? (
-                scholarsOpen ? (
-                  <ExpandLessIcon sx={{ color: "#E0E0E0" }} />
-                ) : (
-                  <ExpandMoreIcon sx={{ color: "#E0E0E0" }} />
-                )
-              ) : null}
-            </ListItem>
-            <Collapse in={scholarsOpen}>
-              <ListItem
-                button
-                onClick={() => onItemClick("grades")}
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  paddingLeft: 4,
-                  color: "#E0E0E0",
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    color: "#E0E0E0",
-                    marginLeft: -6,
-                    [`& .MuiDrawer-paper`]: { marginLeft: -6 },
-                  }}
-                >
-                  <GradeIcon />
-                </ListItemIcon>
-                {open && (
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontSize: "0.8rem",
-                      marginLeft: -2,
-                      [`& .MuiDrawer-paper`]: { marginLeft: -2 },
-                    }}
-                  >
-                    Grades
-                  </Typography>
-                )}
-              </ListItem>
-              <ListItem
-                button
-                onClick={() => onItemClick("users")}
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  paddingLeft: 4,
-                  borderBottom: "1px solid #9E9E9E",
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    color: "#E0E0E0",
-                    marginLeft: -7,
-                    [`& .MuiDrawer-paper`]: { marginLeft: -7 },
-                  }}
-                >
-                  <PersonIcon />
-                </ListItemIcon>
-                {open && (
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontSize: "0.8rem",
-                      color: "#E0E0E0",
-                      marginLeft: -2,
-                      [`& .MuiDrawer-paper`]: { marginLeft: -2 },
-                    }}
-                  >
-                    Users
-                  </Typography>
-                )}
-              </ListItem>
-            </Collapse>
+            <DashboardList open={open} onItemClick={onItemClick} />
+            <AnnouncementList open={open} onItemClick={onItemClick} />
+            <AnalyticsList open={open} onItemClick={onItemClick} />
+            <ScholarsList
+              open={open}
+              scholarsOpen={scholarsOpen}
+              handleScholarsToggle={handleScholarsToggle}
+              onItemClick={onItemClick}
+            />
+            <EducationList
+              open={open}
+              educationOpen={educationOpen}
+              handleEducationToggle={handleEducationToggle}
+              onItemClick={onItemClick}
+            />
           </List>
         </Drawer>
       )}

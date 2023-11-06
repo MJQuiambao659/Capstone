@@ -1,6 +1,5 @@
 import React from "react";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
-import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import { useLocation } from "react-router-dom";
@@ -14,22 +13,23 @@ const Breadcrumb = ({}) => {
 
   return (
     <Paper
-      elevation={5}
-      sx={{ padding: 2, width: isSmallScreen ? "80%" : "100%" }}
+      sx={{
+        padding: 1, // Reduce padding for the Paper component
+        width: isSmallScreen ? "80%" : "100%",
+        fontSize: isSmallScreen ? "0.8rem" : "1rem", // Adjust font size for text
+      }}
     >
       <Breadcrumbs separator="›" aria-label="breadcrumb">
         {pathnames.map((value, index) => {
           const last = index === pathnames.length - 1;
-          const to = `/${pathnames.slice(0, index + 1).join("/")}`;
 
-          return last ? (
-            <Typography color="textPrimary" key={to}>
+          return (
+            <Typography
+              color={last ? "textPrimary" : "textSecondary"}
+              key={value}
+            >
               {value}
             </Typography>
-          ) : (
-            <Link color="inherit" href={to} key={to}>
-              {value}
-            </Link>
           );
         })}
       </Breadcrumbs>
