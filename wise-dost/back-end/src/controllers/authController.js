@@ -6,18 +6,35 @@ const jwtKey = require("../../config/auth");
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log(email, password);
 
-    const sql = "SELECT * FROM user_tbl WHERE username = ?";
+    if (!password) {
+      return res.status(401).json({ message: "Password is required" });
+    }
+
+    const sql = "SELECT * FROM user_tbl WHERE email = ?";
     db.query(sql, [email], async (error, results) => {
       if (error || results.length === 0) {
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
       const user = results[0];
-      const passwordMatch = await bcrypt.compare(password, user.password);
+      if (!password) {
+        return res.status(401).json({ message: "Password is required" });
+      }
+
+      const passwordMatch = await new Promise((resolve, reject) => {
+        bcrypt.compare(password, user.password, (err, result) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(result);
+          }
+        });
+      });
 
       if (!passwordMatch) {
-        return res.status(401).json({ message: "Invalid credentials" });
+        return res.status(401).json({ message: "Invalid password" });
       }
 
       const tokenExpiration = "30d";
@@ -26,6 +43,8 @@ const login = async (req, res) => {
         jwtKey.secretKey,
         { expiresIn: tokenExpiration }
       );
+      res.status(200).json({ token });
+      console.log(token)
     });
   } catch (error) {
     console.error(error);
@@ -33,4 +52,4 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { login }
+module.exports = { login };

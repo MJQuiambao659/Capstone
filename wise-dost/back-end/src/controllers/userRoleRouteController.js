@@ -26,7 +26,9 @@ const userRoute = (req, res) => {
 
 const roleRoute = (req, res) => {
   const userRole = req.user.role;
+  const userId = req.user.id;
+  const expiresIn = req.user.exp;
 
-  res.json({ role: userRole });
+  res.json({ id: userId, role: userRole, expiresIn: expiresIn });
 };
 module.exports = { adminRoute, moderatorRoute, userRoute, roleRoute };

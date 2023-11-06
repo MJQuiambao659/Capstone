@@ -10,9 +10,11 @@ const verifyToken = (req, res, next) => {
 
   jwt.verify(token, jwtKey.secretKey, (err, decoded) => {
     if (err) {
+      console.error("Token verification failed:", err);
       return res.status(401).json({ message: "Failed to authenticate token" });
     }
     req.user = decoded;
+    console.log(req.user)
     next();
   });
 };

@@ -4,9 +4,11 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import ButtonBase from "@mui/material/ButtonBase";
 import Typography from "@mui/material/Typography";
+import { useNavigate } from "react-router-dom";
 
 const UserProfileDropdown = () => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const navigate = useNavigate();
 
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -17,7 +19,10 @@ const UserProfileDropdown = () => {
   };
 
   const handleLogout = () => {
-    // Implement your logout logic here
+    localStorage.clear();
+    console.log(localStorage);
+    navigate("/");
+    handleMenuClose();
   };
 
   return (

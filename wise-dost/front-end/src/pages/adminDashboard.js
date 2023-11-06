@@ -13,6 +13,7 @@ import Courses from "../components/Layout/SidebarContent/Courses";
 import Subjects from "../components/Layout/SidebarContent/Subjects";
 import { useNavigate, useLocation } from "react-router-dom";
 import Breadcrumb from "../components/Layout/Breadcrumbs";
+import Loading from "../utils/loading";
 
 const AdminDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -21,6 +22,7 @@ const AdminDashboard = () => {
   );
   const navigate = useNavigate();
   const location = useLocation();
+  const [loading, setLoading] = useState(true);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -69,6 +71,22 @@ const AdminDashboard = () => {
   useEffect(() => {
     setInitialContent(); // Set initial content based on the current route
   }, [location.pathname]); // Re-run when the route changes
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+
+    if (!token || role !== "Admin") {
+      navigate("/");
+    }
+    setTimeout(() => {
+      setLoading(false);
+    }, 750);
+  }, [navigate, location]);
+
+  if (loading) {
+    return <Loading />;
+  }
 
   const onItemClick = (item) => {
     switch (item) {

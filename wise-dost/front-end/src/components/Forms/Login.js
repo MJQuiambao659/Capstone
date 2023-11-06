@@ -18,6 +18,7 @@ import Registration from "./Registration";
 import { handleLoginSubmit } from "./LoginHandlers";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Loading from "../../utils/loading";
 
 const Login = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -30,35 +31,9 @@ const Login = () => {
     rememberMe: rememberMe,
   };
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      const roleResponse = axios.get(
-        "http://localhost:3001/api/user-role/role",
-        {
-          headers: {
-            Authorization: `Bearer ${roleResponse.data.token}`,
-          },
-        }
-      );
-      const userRole = roleResponse.data.role;
-
-      localStorage.setItem("userRole", userRole);
-
-      if (userRole === "Admin") {
-        navigate("/admin");
-      } else if (userRole === "Moderator") {
-        navigate("/moderator");
-      } else if (userRole === "User") {
-        navigate("/user");
-      } else {
-        navigate("/");
-      }
-    }
-  }, [navigate]);
-
   const [loginState, setLoginState] = useState(initialLoginForm);
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(true);
 
   const handleLoginChange = (e) => {
     const { name, value } = e.target;
@@ -81,6 +56,7 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    console.log(loginState);
     try {
       const response = await axios.post(
         "http://localhost:3001/api/auth/login",
@@ -92,15 +68,21 @@ const Login = () => {
           "http://localhost:3001/api/user-role/role",
           {
             headers: {
-              Authorization: `Bearer ${response.data.token}`,
+              Authorization: `${response.data.token}`,
             },
           }
         );
 
         const role = roleResponse.data.role;
+        const id = roleResponse.data.id;
+        const expiresIn = roleResponse.data.expiresIn;
 
         localStorage.setItem("token", response.data.token);
+        localStorage.setItem("id", id);
         localStorage.setItem("role", role);
+        localStorage.setItem("expiresIn", expiresIn);
+
+        console.log(localStorage);
 
         if (role === "Admin") {
           navigate("/admin");
@@ -111,13 +93,48 @@ const Login = () => {
         }
       }
     } catch (error) {
-      console.error("Login failed: ", error);
+      if (error.response) {
+        // The request was made, but the server responded with an error
+        console.error(
+          "Server responded with an error:",
+          error.response.status,
+          error.response.data
+        );
+      } else if (error.request) {
+        // The request was made, but there was no response from the server
+        console.error("No response from the server");
+      } else {
+        // Something else went wrong
+        console.error("An error occurred:", error.message);
+      }
     }
   };
 
   const handleLoginClick = () => {
     handleLoginSubmit(loginState, setErrors);
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+
+    if (token && role) {
+      if (role === "Admin") {
+        navigate("/admin");
+      } else if (role === "Moderator") {
+        navigate("/moderator");
+      } else if (role === "User") {
+        navigate("/user");
+      }
+    }
+    setTimeout(() => {
+      setLoading(false);
+    }, 750);
+  }, [navigate]);
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <>
